@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Simple web video</title>
+    <link rel="stylesheet" href="main.css">
+</head>
+
+<body>
+    <h1>Web video</h1>
+    <p>
+        Experiment with media constraints! Edit the constraint sets for the video and
+        audio tracks in the edit boxes on the left, then click the "Apply Constraints"
+        button to try them out. The actual settings the browser selected and is using
+        are shown in the boxes on the right. Below all of that, you'll see the video
+        itself.
+    </p>
+    <p>Click the "Start" button to begin.</p>
+
+    <h3>Constrainable properties available:</h3>
+    <ul id="supportedConstraints">
+    </ul>
+    <button id="startButton" type="button" class="button">Start</button>
+    <div class="wrapper">
+        <div class="trackrow">
+            <div class="leftside">
+                <h3>Requested video constraints:</h3>
+                <textarea id="videoConstraintEditor" cols="32" rows="8"></textarea>
+            </div>
+            <div class="rightside">
+                <h3>Actual video settings:</h3>
+                <textarea id="videoSettingsText" cols="32" rows="8" disabled=""></textarea>
+            </div>
+        </div>
+        <div class="trackrow">
+            <div class="leftside">
+                <h3>Requested audio constraints:</h3>
+                <textarea id="audioConstraintEditor" cols="32" rows="8"></textarea>
+            </div>
+            <div class="rightside">
+                <h3>Actual audio settings:</h3>
+                <textarea id="audioSettingsText" cols="32" rows="8" disabled=""></textarea>
+            </div>
+        </div>
+        <button id="applyButton" type="button" class="button">Apply Constraints</button>
+    </div>
+    <div>
+        <video id="video" autoplay=""></video>
+    </div>
+
+    <button id="stopButton" type="button" class="button">Stop Video</button>
+
+    <div id="log"></div>
+
+    <script src="app.js"></script>
+    <noscript>You need to enable JavaScript to view the full site.</noscript>
+
+</body>
+
+</html>
