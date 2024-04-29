@@ -36,6 +36,8 @@ body {
 video {
   margin-top: 20px;
   border: 1px solid black;
+  transform: scale(-1, 1);          /* for Firefox (& IE) */
+  -webkit-transform: scale(-1, 1);  /* for Chrome & Opera (& Safari) */
 }
 
 .button {

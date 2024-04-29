@@ -1,7 +1,7 @@
 'use strict'
 
 // todo:
-// - mirror video
+// - mirror video only if enabled - edit CSS?
 // - measure frame rate, https://webrtchacks.com/mirror-framerate/
 // - apply effects on streams, downsample? greyscale?
 
