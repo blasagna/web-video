@@ -1,14 +1,15 @@
 'use strict'
 
 // todo:
-// - add info on selected device
 // - mirror video
-// - apply effects on streams
+// - measure frame rate, https://webrtchacks.com/mirror-framerate/
+// - apply effects on streams, downsample? greyscale?
 
 const videoDefaultConstraintString =
     '{\n  "width": {"min": 1000},\n  "height": {"min": 700},\n  "frameRate": 30\n}';
 const audioDefaultConstraintString =
-    'false';
+    '{\n  "sampleSize": 16,\n  "channelCount": 2,\n  "echoCancellation": true\n}';
+
 
 let videoConstraints = null;
 let audioConstraints = null;
@@ -75,9 +76,43 @@ function startVideo() {
         })
         .then(() => {
             getCurrentSettings();
+            log(`Selected video label: <code>${videoTrack.label}</code>`);
+            log(`Selected audio label: <code>${audioTrack.label}</code>`);
+        })
+        .then(() => {
+            handlePermission();
+            enumerateDevices();
         })
         .catch(handleError);
 }
+
+function enumerateDevices() {
+    if (!navigator.mediaDevices?.enumerateDevices) {
+        log("enumerateDevices() not supported.");
+    } else {
+        // List cameras and microphones.
+        navigator.mediaDevices
+            .enumerateDevices()
+            .then((devices) => {
+                devices.forEach((device) => {
+                    log(`Found device <code>${device.kind}</code>: <code>${device.label}</code> id = <code>${device.deviceId}</code>`);
+                });
+            })
+            .catch((err) => {
+                console.error(`error enumerating devices ${err.name}: ${err.message}`);
+            });
+    }
+}
+
+function handlePermission() {
+    navigator.permissions.query({ name: "camera" }).then((result) => {
+        console.log(`camera permission: ${result.state}`);
+    });
+    navigator.permissions.query({ name: "microphone" }).then((result) => {
+        console.log(`microphone permission: ${result.state}`);
+    });
+}
+
 
 document.getElementById("startButton").addEventListener(
     "click",
@@ -155,7 +190,7 @@ for (const constraint in supportedConstraints) {
     if (Object.hasOwn(supportedConstraints, constraint)) {
         const elem = document.createElement("li");
 
-        elem.innerHTML = `<code><a href='https://developer.mozilla.org/docs/Web/API/MediaTrackSupportedConstraints/${constraint}' target='_blank'>${constraint}</a></code>`;
+        elem.innerHTML = `<code><a href='https://developer.mozilla.org/en-US/docs/Web/API/MediaTrackSupportedConstraints/${constraint}' target='_blank'>${constraint}</a></code>`;
         supportedConstraintList.appendChild(elem);
     }
 }
@@ -169,83 +204,3 @@ function handleError(reason) {
         `Error <code>${reason.name}</code> in constraint <code>${reason.constraint}</code>: ${reason.message}`,
     );
 }
-
-// todo: remove
-// const constraintList = document.getElementById("supportedConstraints");
-// const supportedConstraints = navigator.mediaDevices.getSupportedConstraints();
-
-// for (const constraint of Object.keys(supportedConstraints)) {
-//     const elem = document.createElement("li");
-//     elem.innerHTML = `<code>${constraint}</code>`;
-//     constraintList.appendChild(elem);
-// }
-
-
-// let constraints = {
-//     video: {
-//         width: { min: 1280 },
-//         height: { min: 720 },
-//     }, audio: false
-// };
-
-// if (!navigator.mediaDevices?.enumerateDevices) {
-//     console.log("enumerateDevices() not supported.");
-// } else {
-//     // List cameras and microphones.
-//     navigator.mediaDevices
-//         .enumerateDevices()
-//         .then((devices) => {
-//             devices.forEach((device) => {
-//                 console.log(`${device.kind}: ${device.label} id = ${device.deviceId}`);
-//             });
-//         })
-//         .catch((err) => {
-//             console.error(`error enumerating devices ${err.name}: ${err.message}`);
-//         });
-// }
-
-
-// let cameraSelector = document.querySelector('.btn');
-// cameraSelector.addEventListener('click', function () {
-//     console.log('clicked the button');
-//     navigator.mediaDevices
-//         .getUserMedia(constraints)
-//         .then((stream) => {
-//             /* use the stream */
-//             console.log('got stream');
-//         })
-//         .catch((err) => {
-//             /* handle the error */
-//             console.error(`error getting media stream: ${err.name}: ${err.message}`);
-//         });
-
-// });
-
-/* 
-const displayMediaOptions = {
-  video: {
-    displaySurface: "browser",
-  },
-  audio: {
-    suppressLocalAudioPlayback: false,
-  },
-  preferCurrentTab: false,
-  selfBrowserSurface: "exclude",
-  systemAudio: "include",
-  surfaceSwitching: "include",
-  monitorTypeSurfaces: "include",
-};
-
-async function startCapture(displayMediaOptions) {
-  let captureStream;
-
-  try {
-    captureStream =
-      await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
-  } catch (err) {
-    console.error(`Error: ${err}`);
-  }
-  return captureStream;
-}
-
-*/
