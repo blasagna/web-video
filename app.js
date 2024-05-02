@@ -1,8 +1,8 @@
 'use strict'
 
 // todo:
-// - mirror video only if enabled - edit CSS?
 // - measure frame rate, https://webrtchacks.com/mirror-framerate/
+// - if multiple cameras, select from an enumerated list. Note: "deviceId" is a valid constaint key
 // - apply effects on streams, downsample? greyscale?
 
 const videoDefaultConstraintString =
@@ -24,6 +24,7 @@ const videoConstraintEditor = document.getElementById("videoConstraintEditor");
 const audioConstraintEditor = document.getElementById("audioConstraintEditor");
 const videoSettingsText = document.getElementById("videoSettingsText");
 const audioSettingsText = document.getElementById("audioSettingsText");
+const flipVideoCheckbox = document.getElementById("flipVideo");
 
 videoConstraintEditor.value = videoDefaultConstraintString;
 audioConstraintEditor.value = audioDefaultConstraintString;
@@ -113,6 +114,15 @@ function handlePermission() {
     });
 }
 
+flipVideoCheckbox.addEventListener("change", () => {
+    if (flipVideoCheckbox.checked) {
+        videoElement.style.transform = "scale(-1, 1)"; /* for Firefox (& IE) */
+        videoElement.style.webkitTransform = "scale(-1, 1)"; /* for Chrome & Opera (& Safari) */
+    } else {
+        videoElement.style.transform = "scale(1, 1)";
+        videoElement.style.webkitTransform = "scale(-1, 1)";
+    }
+});
 
 document.getElementById("startButton").addEventListener(
     "click",
